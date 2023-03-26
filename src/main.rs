@@ -5,6 +5,9 @@ use actix_web::middleware::Logger;
 use actix_web::{get, App, HttpResponse, HttpServer, Responder};
 use serde_json::json;
 
+mod config;
+mod models;
+
 const PORT: u16 = 3333;
 
 #[get("/api/healthchecker")]
