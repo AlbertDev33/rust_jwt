@@ -4,9 +4,18 @@ use std::io::Result;
 use actix_web::middleware::Logger;
 use actix_web::{get, App, HttpResponse, HttpServer, Responder};
 use serde_json::json;
+use sqlx::{Pool, Postgres};
 
 mod config;
 mod models;
+mod jwt_auth;
+
+use config::Config;
+
+pub struct AppState {
+    db: Pool<Postgres>,
+    env: Config,
+}
 
 const PORT: u16 = 3333;
 
