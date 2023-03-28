@@ -16,7 +16,7 @@ impl Config {
     pub fn init() -> Config {
         let database_url = init_environment_var("DATABASE_URL");
         let jwt_secret = init_environment_var("JWT_SECRET");
-        let jwt_expires_in = init_environment_var("JWT_EXPIRES_IN");
+        let jwt_expires_in = init_environment_var("JWT_EXPIRED_IN");
         let jwt_maxage = init_environment_var("JWT_MAXAGE");
 
         return Config {
