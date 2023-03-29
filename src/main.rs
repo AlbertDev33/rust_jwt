@@ -1,10 +1,11 @@
 use std::env::{set_var, var_os};
 use std::io::Result;
 
+use actix_cors::Cors;
+use actix_web::http::header;
 use actix_web::middleware::Logger;
-use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
-use serde_json::json;
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 
 mod config;
@@ -13,6 +14,7 @@ mod jwt_auth;
 mod models;
 
 use config::Config;
+use handlers::routes;
 
 pub struct AppState {
     db: Pool<Postgres>,
@@ -20,13 +22,6 @@ pub struct AppState {
 }
 
 const PORT: u16 = 3333;
-
-#[get("/api/healthchecker")]
-async fn health_checker_handler() -> impl Responder {
-    const MESSAGE: &str = "JWT Authentication in Rust using Actix-web, Postgres and SQLX";
-    let response = HttpResponse::Ok().json(json!({ "status": "success", "message": MESSAGE }));
-    return response;
-}
 
 #[actix_web::main]
 async fn main() -> Result<()> {
@@ -55,13 +50,23 @@ async fn main() -> Result<()> {
     println!("🚀 Server started successfully at the port {}", PORT);
 
     HttpServer::new(move || {
+        Cors::default()
+            .allowed_origin("*")
+            .allowed_methods(vec!["GET", "POST"])
+            .allowed_headers(vec![
+                header::CONTENT_TYPE,
+                header::AUTHORIZATION,
+                header::ACCEPT,
+            ])
+            .supports_credentials();
         App::new()
             .app_data(web::Data::new(AppState {
                 db: pool.clone(),
                 env: config.clone(),
             }))
+            .configure(routes::config)
             .wrap(Logger::default())
-            .service(health_checker_handler)
+            .wrap(Logger::default())
     })
     .bind(("127.0.0.1", PORT))?
     .run()
