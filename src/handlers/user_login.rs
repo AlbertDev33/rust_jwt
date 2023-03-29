@@ -11,7 +11,7 @@ use crate::models::users::{LoginUserSchema, TokenClaims, User};
 use crate::AppState;
 
 #[post("/auth/login")]
-async fn user_login_handler(
+pub async fn user_login_handler(
     body: web::Json<LoginUserSchema>,
     data: web::Data<AppState>,
 ) -> impl Responder {
