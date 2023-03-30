@@ -38,7 +38,7 @@ async fn main() -> Result<()> {
         .await
     {
         Ok(pool) => {
-            print!("✅Connection to the database is successful!");
+            print!("✅Connection to the database is successful!\n");
             pool
         }
         Err(err) => {
